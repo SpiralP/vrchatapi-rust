@@ -17,7 +17,6 @@ pub enum UserState {
     Active,
     #[serde(rename = "online")]
     Online,
-
 }
 
 impl ToString for UserState {
@@ -29,13 +28,3 @@ impl ToString for UserState {
         }
     }
 }
-
-impl Default for UserState {
-    fn default() -> UserState {
-        Self::Offline
-    }
-}
-
-
-
-

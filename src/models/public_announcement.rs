@@ -8,9 +8,7 @@
 
 /// PublicAnnouncement : Public Announcement
 
-
-
-#[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct PublicAnnouncement {
     /// Announcement name
     #[serde(rename = "name")]
@@ -23,11 +21,6 @@ pub struct PublicAnnouncement {
 impl PublicAnnouncement {
     /// Public Announcement
     pub fn new(name: String, text: String) -> PublicAnnouncement {
-        PublicAnnouncement {
-            name,
-            text,
-        }
+        PublicAnnouncement { name, text }
     }
 }
-
-

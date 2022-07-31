@@ -23,7 +23,6 @@ pub enum Region {
     Jp,
     #[serde(rename = "unknown")]
     Unknown,
-
 }
 
 impl ToString for Region {
@@ -38,13 +37,3 @@ impl ToString for Region {
         }
     }
 }
-
-impl Default for Region {
-    fn default() -> Region {
-        Self::Us
-    }
-}
-
-
-
-

@@ -19,7 +19,6 @@ pub enum DeploymentGroup {
     Grape,
     #[serde(rename = "cherry")]
     Cherry,
-
 }
 
 impl ToString for DeploymentGroup {
@@ -32,13 +31,3 @@ impl ToString for DeploymentGroup {
         }
     }
 }
-
-impl Default for DeploymentGroup {
-    fn default() -> DeploymentGroup {
-        Self::Blue
-    }
-}
-
-
-
-

@@ -8,9 +8,7 @@
 
 /// Instance : * `hidden` field is only present if InstanceType is `hidden` aka \"Friends+\", and is instance creator. * `friends` field is only present if InstanceType is `friends` aka \"Friends\", and is instance creator. * `private` field is only present if InstanceType is `private` aka \"Invite\" or \"Invite+\", and is instance creator.
 
-
-
-#[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Instance {
     #[serde(rename = "active")]
     pub active: bool,
@@ -48,7 +46,7 @@ pub struct Instance {
     pub region: crate::models::Region,
     #[serde(rename = "shortName")]
     pub short_name: String,
-    /// The tags array on Instances usually contain the language tags of the people in the instance. 
+    /// The tags array on Instances usually contain the language tags of the people in the instance.
     #[serde(rename = "tags")]
     pub tags: Vec<String>,
     #[serde(rename = "type")]
@@ -69,7 +67,26 @@ pub struct Instance {
 
 impl Instance {
     /// * `hidden` field is only present if InstanceType is `hidden` aka \"Friends+\", and is instance creator. * `friends` field is only present if InstanceType is `friends` aka \"Friends\", and is instance creator. * `private` field is only present if InstanceType is `private` aka \"Invite\" or \"Invite+\", and is instance creator.
-    pub fn new(active: bool, can_request_invite: bool, capacity: i32, client_number: String, full: bool, id: String, instance_id: String, location: String, n_users: i32, name: String, permanent: bool, photon_region: crate::models::Region, platforms: crate::models::InstancePlatforms, region: crate::models::Region, short_name: String, tags: Vec<String>, _type: crate::models::InstanceType, world_id: String) -> Instance {
+    pub fn new(
+        active: bool,
+        can_request_invite: bool,
+        capacity: i32,
+        client_number: String,
+        full: bool,
+        id: String,
+        instance_id: String,
+        location: String,
+        n_users: i32,
+        name: String,
+        permanent: bool,
+        photon_region: crate::models::Region,
+        platforms: crate::models::InstancePlatforms,
+        region: crate::models::Region,
+        short_name: String,
+        tags: Vec<String>,
+        _type: crate::models::InstanceType,
+        world_id: String,
+    ) -> Instance {
         Instance {
             active,
             can_request_invite,
@@ -96,5 +113,3 @@ impl Instance {
         }
     }
 }
-
-

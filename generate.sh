@@ -1,28 +1,39 @@
 #!/bin/bash
+set -e
 
 # Generate Client
-rm src/apis src/models docs -rf
+rm -rf src/apis src/models docs
 
-java -jar ./openapi-generator-cli.jar generate \
--g rust \
---additional-properties=packageName=vrchatapi,supportAsync=false \
---git-user-id=vrchatapi \
---git-repo-id=vrchatapi-rust \
--o . \
--i https://raw.githubusercontent.com/vrchatapi/specification/gh-pages/openapi.yaml \
---http-user-agent="vrchatapi-rust"
-#--global-property debugOperations=true
+npx openapi-generator-cli generate \
+    -g rust \
+    --additional-properties=packageName=vrchatapi \
+    --git-user-id=vrchatapi \
+    --git-repo-id=vrchatapi-rust \
+    -o . \
+    -i https://raw.githubusercontent.com/vrchatapi/specification/gh-pages/openapi.yaml \
+    --http-user-agent="vrchatapi-rust"
+    #--global-property debugOperations=true
 
-# Add license and description to Cargo.toml
-sed -i '/^edition = "2018"/i license = "MIT"' Cargo.toml
-sed -i '/^edition = "2018"/a description="VRChat API Library for Rust"' Cargo.toml
+# Use 2021 edition rust
+sed -i 's/^edition = "2018"/edition = "2021"/' Cargo.toml
+
+# Add description and license to Cargo.toml
+sed -i '/^name = "vrchatapi"/a description = "VRChat API Library for Rust"' Cargo.toml
+sed -i '/^edition = "2021"/i license = "MIT"' Cargo.toml
+
+# add "cookies" feature to reqwest
+sed -i 's/^features = \[/features = \["cookies", /' Cargo.toml
 
 # Remove messily pasted markdown at top of every file
 find src -type f -exec sed -i '/VRChat API Banner/d' {} \;
 # Remove openapi version in every file
 find src -type f -exec sed -i '/The version of the OpenAPI document/d' {} \;
 
+# # remove Default derive macro from all types
+find src -type f -exec sed -i 's/Default, //g' {} \;
+
 # Cookie storage
 sed -i 's/Client::new()/Client::builder().cookie_store(true).build().unwrap()/g' src/apis/configuration.rs
 
+cargo fmt
 cargo build

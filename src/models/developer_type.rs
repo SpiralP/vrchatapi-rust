@@ -19,7 +19,6 @@ pub enum DeveloperType {
     Internal,
     #[serde(rename = "moderator")]
     Moderator,
-
 }
 
 impl ToString for DeveloperType {
@@ -32,13 +31,3 @@ impl ToString for DeveloperType {
         }
     }
 }
-
-impl Default for DeveloperType {
-    fn default() -> DeveloperType {
-        Self::None
-    }
-}
-
-
-
-

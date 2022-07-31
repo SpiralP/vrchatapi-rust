@@ -21,7 +21,6 @@ pub enum UserStatus {
     Busy,
     #[serde(rename = "offline")]
     Offline,
-
 }
 
 impl ToString for UserStatus {
@@ -35,13 +34,3 @@ impl ToString for UserStatus {
         }
     }
 }
-
-impl Default for UserStatus {
-    fn default() -> UserStatus {
-        Self::Active
-    }
-}
-
-
-
-
