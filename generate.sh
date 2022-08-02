@@ -32,8 +32,8 @@ find src -type f -exec sed -i '/The version of the OpenAPI document/d' {} \;
 # # remove Default derive macro from all types
 find src -type f -exec sed -i 's/Default, //g' {} \;
 
-# Cookie storage
-sed -i 's/Client::new()/Client::builder().cookie_store(true).build().unwrap()/g' src/apis/configuration.rs
-
 cargo fmt
+
+git apply configuration.patch
+
 cargo build

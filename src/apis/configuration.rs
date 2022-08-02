@@ -7,16 +7,15 @@
  */
 
 use reqwest;
+use std::sync::Arc;
 
 #[derive(Debug, Clone)]
 pub struct Configuration {
     pub base_path: String,
     pub user_agent: Option<String>,
     pub client: reqwest::Client,
+    pub cookie_provider: Arc<reqwest::cookie::Jar>,
     pub basic_auth: Option<BasicAuth>,
-    pub oauth_access_token: Option<String>,
-    pub bearer_access_token: Option<String>,
-    pub api_key: Option<ApiKey>,
     // TODO: take an oauth2 token source, similar to the go one
 }
 
@@ -36,17 +35,17 @@ impl Configuration {
 
 impl Default for Configuration {
     fn default() -> Self {
+        let cookie_provider = Arc::new(reqwest::cookie::Jar::default());
+
         Configuration {
             base_path: "https://api.vrchat.cloud/api/1".to_owned(),
             user_agent: Some("vrchatapi-rust".to_owned()),
             client: reqwest::Client::builder()
-                .cookie_store(true)
+                .cookie_provider(cookie_provider.clone())
                 .build()
                 .unwrap(),
+            cookie_provider,
             basic_auth: None,
-            oauth_access_token: None,
-            bearer_access_token: None,
-            api_key: None,
         }
     }
 }
