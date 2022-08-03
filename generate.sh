@@ -35,5 +35,6 @@ find src -type f -exec sed -i 's/Default, //g' {} \;
 cargo fmt
 
 git apply configuration.patch
+git apply two_factor.patch
 
 cargo build

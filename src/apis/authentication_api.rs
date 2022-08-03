@@ -166,10 +166,29 @@ pub async fn delete_user(
     }
 }
 
+pub enum LoginResponse {
+    CurrentUser(crate::models::CurrentUser),
+    RequiresTwoFactorAuth(RequiresTwoFactorAuth),
+}
+
+#[derive(Clone, Debug, PartialEq, Deserialize)]
+pub struct RequiresTwoFactorAuth {
+    #[serde(rename = "requiresTwoFactorAuth")]
+    pub requires_two_factor_auth: Vec<TwoFactorAuthKind>,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Deserialize)]
+pub enum TwoFactorAuthKind {
+    #[serde(rename = "totp")]
+    Totp,
+    #[serde(rename = "otp")]
+    Otp,
+}
+
 /// This endpoint does the following two operations:   1) Checks if you are already logged in by looking for a valid `auth` cookie. If you are have a valid auth cookie then no additional auth-related actions are taken. If you are **not** logged in then it will log you in with the `Authorization` header and set the `auth` cookie. The `auth` cookie will only be sent once.   2) If logged in, this function will also return the CurrentUser object containing detailed information about the currently logged in user.  **WARNING: Session Limit:** Each authentication with login credentials counts as a separate session, out of which you have a limited amount. Make sure to save and reuse the `auth` cookie if you are often restarting the program. The provided API libraries automatically save cookies during runtime, but does not persist during restart. While it can be fine to use username/password during development, expect in production to very fast run into the rate-limit and be temporarily blocked from making new sessions until older ones expire. The exact number of simultaneous sessions is unknown/undisclosed.
 pub async fn get_current_user(
     configuration: &configuration::Configuration,
-) -> Result<crate::models::CurrentUser, Error<GetCurrentUserError>> {
+) -> Result<LoginResponse, Error<GetCurrentUserError>> {
     let local_var_configuration = configuration;
 
     let local_var_client = &local_var_configuration.client;
@@ -196,7 +215,15 @@ pub async fn get_current_user(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        serde_json::from_str(&local_var_content).map_err(Error::from)
+        match serde_json::from_str::<crate::models::CurrentUser>(&local_var_content) {
+            Ok(current_user) => Ok(LoginResponse::CurrentUser(current_user)),
+            Err(e) => match serde_json::from_str::<RequiresTwoFactorAuth>(&local_var_content) {
+                Ok(requires_response) => {
+                    Ok(LoginResponse::RequiresTwoFactorAuth(requires_response))
+                }
+                Err(_) => Err(Error::from(e)),
+            },
+        }
     } else {
         let local_var_entity: Option<GetCurrentUserError> =
             serde_json::from_str(&local_var_content).ok();
